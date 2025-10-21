@@ -62,7 +62,7 @@ public sealed class NotificationType : IEquatable<NotificationType>
     /// Used internally for cache management to ensure absolute uniqueness.
     /// </summary>
     private string UniqueId { get; }
-    
+
     /// <summary>
     /// Internal cache of all predefined types using FrozenDictionary for thread-safe, allocation-free lookups.
     /// </summary>
@@ -110,10 +110,10 @@ public sealed class NotificationType : IEquatable<NotificationType>
             _customTypesCache ??= new Dictionary<string, NotificationType>(StringComparer.OrdinalIgnoreCase);
 
             var type = new NotificationType(name, name, 50, false);
-            
+
             if (_customTypesCache.TryGetValue(type.UniqueId, out var customType))
                 return customType;
-            
+
             _customTypesCache[type.UniqueId] = type;
             return type;
         }
@@ -144,14 +144,14 @@ public sealed class NotificationType : IEquatable<NotificationType>
             return predefinedType;
 
         var type = new NotificationType(name, displayName, severityLevel, isFailure);
-        
+
         using (CustomTypesLock.EnterScope())
         {
             _customTypesCache ??= new Dictionary<string, NotificationType>(StringComparer.OrdinalIgnoreCase);
 
             if (_customTypesCache.TryGetValue(type.UniqueId, out var customType))
                 return customType;
-            
+
             _customTypesCache[type.UniqueId] = type;
             return type;
         }
