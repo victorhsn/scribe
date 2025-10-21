@@ -13,13 +13,13 @@ public interface INotificationStore
     /// </summary>
     /// <param name="notification">The notification message to add.</param>
     void Add(in NotificationMessage notification);
-    
+
     /// <summary>
     /// Add multiple notifications to the store in a single operation.
     /// </summary>
     /// <param name="notifications">A span of notifications to add.</param>
     void AddRange(ReadOnlySpan<NotificationMessage> notifications);
-    
+
     /// <summary>
     /// Asynchronously adds a notification to the store.
     /// Useful for operations that may involve I/O or long-running tasks.
@@ -27,8 +27,8 @@ public interface INotificationStore
     /// <param name="notification">The notification message to add.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns></returns>
-    ValueTask AddSync(NotificationMessage notification,  CancellationToken cancellationToken = default);
-    
+    ValueTask AddSync(NotificationMessage notification, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Asynchronously adds multiple to the store.
     /// </summary>
@@ -43,7 +43,7 @@ public interface INotificationStore
     /// <param name="notificationId">The unique identifier of the notification to remove.</param>
     /// <returns>True if the notification was removed; otherwise, false.</returns>
     bool Remove(string notificationId);
-    
+
     /// <summary>
     /// Remove all notifications of a specific type.
     /// </summary>
@@ -55,7 +55,7 @@ public interface INotificationStore
     /// Clears all notifications from the store.
     /// </summary>
     void Clear();
-    
+
     /// <summary>
     /// Asynchronously removes a specific notification by its ID.
     /// </summary>
@@ -63,7 +63,7 @@ public interface INotificationStore
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>True if the notification was removed; otherwise, false.</returns>
     ValueTask<bool> RemoveAsync(string notificationId, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Asynchronously removes all notifications of a specific type.
     /// </summary>
@@ -71,7 +71,7 @@ public interface INotificationStore
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The number of notifications removed.</returns>
     ValueTask<int> RemoveByTypeAsync(NotificationType notificationType, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Asynchronously clears all notifications from the store.
     /// <param name="cancellationToken">The cancellation token.</param>
@@ -89,14 +89,14 @@ public interface INotificationStore
     /// </summary>
     /// <returns>True if the store has error notifications; otherwise, false</returns>
     bool HasErrors();
-    
+
     /// <summary>
     /// Determines whether the store contains any notifications of a specific type.
     /// </summary>
     /// <param name="notificationType">The type to check for.</param>
     /// <returns>True if notifications of the specified type exist; otherwise, false</returns>
     bool HasNotificationType(NotificationType notificationType);
-    
+
     /// <summary>
     /// Determines whether a notification with the specified ID exists in the store.
     /// </summary>
@@ -109,14 +109,14 @@ public interface INotificationStore
     /// </summary>
     /// <returns>The count of notifications.</returns>
     int Count();
-    
+
     /// <summary>
     /// Gets the number of notifications of a specific type.
     /// </summary>
     /// <param name="notificationType">The type of notifications to count.</param>
     /// <returns>The count of notifications of the specified type.</returns>
     int Count(NotificationType notificationType);
-    
+
     /// <summary>
     /// Gets the number of error notifications.
     /// </summary>
@@ -134,7 +134,7 @@ public interface INotificationStore
     /// </summary>
     /// <returns>An enumerable of notifications without immediate allocation.</returns>
     IEnumerable<NotificationMessage> GetAll();
-    
+
     /// <summary>
     /// Gets all notifications of a specific type using lazy evaluation.
     /// </summary>
@@ -159,13 +159,13 @@ public interface INotificationStore
     /// </summary>
     /// <returns>An enumerable of info notifications.</returns>
     IEnumerable<NotificationMessage> GetInfos();
-    
+
     /// <summary>
     /// Gets all notifications using lazy evaluation.
     /// </summary>
     /// <returns>An enumerable of success notifications.</returns>
     IEnumerable<NotificationMessage> GetSuccesses();
-    
+
     /// <summary>
     /// Gets a specific notification by its ID.
     /// </summary>
@@ -179,7 +179,7 @@ public interface INotificationStore
     /// </summary>
     /// <returns>A read-only list of notifications.</returns>
     IReadOnlyList<NotificationMessage> GetAllAsList();
-    
+
     /// <summary>
     /// Gets a read-only collection of notifications of a specific type.
     /// Materializes the collection immediately.
@@ -193,13 +193,13 @@ public interface INotificationStore
     /// </summary>
     /// <returns>A read-only list of error notifications.</returns>
     IReadOnlyList<NotificationMessage> GetErrorsAsList();
-    
+
     /// <summary>
     /// Gets a read-only collection of warning notifications.
     /// </summary>
     /// <returns>A read-only list of warning notifications.</returns>
     IReadOnlyList<NotificationMessage> GetWarningsAsList();
-    
+
     /// <summary>
     /// Tries to get all notifications as a span for zero-copy access and high performance.
     /// This is useful for performance-critical scenarios.
@@ -215,32 +215,32 @@ public interface INotificationStore
     /// <returns>The number of notifications copied.</returns>
     /// <exception cref="ArgumentException">Thrown when the destination span is too small.</exception>
     int CopyToSpan(Span<NotificationMessage> destination);
-    
+
     /// <summary>
     /// Asynchronously determines whether the store contains any notifications.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     ValueTask<bool> HasNotificationsAsync(CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Asynchronously determines whether the store contains any error notifications.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     ValueTask<bool> HasErrorsAsync(CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Asynchronously determines whether the store contains any warning notifications.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns></returns>
     ValueTask<bool> HasWarningsAsync(CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Asynchronously determines whether the store contains any notifications.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     ValueTask<int> CountAsync(CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Asynchronously gets the count of notifications of a specific type.
     /// </summary>

@@ -6,28 +6,28 @@ public readonly struct NotificationMessage : IEquatable<NotificationMessage>
     /// Gets the unique identifier of the notification.
     /// </summary>
     public string Id { get; }
-    
+
     /// <summary>
     /// Gets the type of the notification (Error, Warning, Info, Success, etc).
     /// </summary>
     public NotificationType Type { get; }
-    
+
     /// <summary>
     /// Gets the message content of the notification.
     /// </summary>
     public string Message { get; }
-    
+
     /// <summary>
     /// Gets the timestamp when the notification was created.
     /// </summary>
     public DateTime CreatedAt { get; }
-    
+
     /// <summary>
     /// Gets optional metadata associated with the notification.
     /// This is useful for storing additional context without modifying the core structure.
     /// </summary>
     public IReadOnlyDictionary<string, object?> Metadata { get; }
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="NotificationMessage"/> struct.
     /// </summary>
@@ -78,14 +78,14 @@ public readonly struct NotificationMessage : IEquatable<NotificationMessage>
         Message = message;
         CreatedAt = createdAt;
     }
-    
+
     /// <summary>
     /// Creates a new <see cref="NotificationMessage"/> with a different ID.
     /// Useful for creating derived notifications while maintaining immutability.
     /// </summary>
     /// <param name="id">The new notification ID.</param>
     /// <returns>A new notification message with the specified ID.</returns>
-    public NotificationMessage WithId(string id)  => new NotificationMessage(id, Type, Message, CreatedAt, Metadata);
+    public NotificationMessage WithId(string id) => new NotificationMessage(id, Type, Message, CreatedAt, Metadata);
 
     /// <summary>
     /// Creates a new <see cref="NotificationMessage"/> with a different type.
@@ -93,14 +93,14 @@ public readonly struct NotificationMessage : IEquatable<NotificationMessage>
     /// <param name="type">The new notification type.</param>
     /// <returns>A new notification message with the specified type.</returns>
     public NotificationMessage WithType(NotificationType type) => new(Id, type, Message, CreatedAt, Metadata);
-    
+
     /// <summary>
     /// Creates a new <see cref="NotificationMessage"/> with a different message.
     /// </summary>
     /// <param name="message">The new message content.</param>
     /// <returns>A new notification message with the specified message.</returns>
     public NotificationMessage WithMessage(string message) => new(Id, Type, message, CreatedAt, Metadata);
-    
+
     /// <summary>
     /// Creates a new <see cref="NotificationMessage"/> with additional or updated metadata.
     /// </summary>
