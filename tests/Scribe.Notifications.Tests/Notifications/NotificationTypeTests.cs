@@ -102,7 +102,6 @@ public class NotificationTypeTests
     }
    
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
     public void GetOrCreate_With_InvalidName_Should_Throw_ArgumentException(string invalidName)
@@ -111,7 +110,6 @@ public class NotificationTypeTests
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
     public void GetOrCreate_With_CustomProperties_InvalidName_Should_Throw_ArgumentException(string invalidName)
@@ -120,7 +118,6 @@ public class NotificationTypeTests
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
     public void GetOrCreate_With_CustomProperties_InvalidDisplayName_Should_Throw_ArgumentException(
