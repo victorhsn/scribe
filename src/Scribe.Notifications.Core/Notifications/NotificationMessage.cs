@@ -140,7 +140,7 @@ public readonly struct NotificationMessage : IEquatable<NotificationMessage>
     /// </summary>
     /// <returns>A string representation of the notification.</returns>
     public override string ToString() =>
-        $"[{Id}] {Type.Name}: {Message}";
+        $"[{Id}] {Type}: {Message}";
 
     /// <summary>
     /// Determines whether two specified <see cref="NotificationMessage"/> instances are equal.
