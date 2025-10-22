@@ -76,6 +76,7 @@ public readonly struct NotificationMessage : IEquatable<NotificationMessage>
         Id = string.Intern(id);
         Type = type;
         Message = message;
+        Metadata = metadata;
         CreatedAt = createdAt;
     }
 
