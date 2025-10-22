@@ -18,5 +18,24 @@
     &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationTypeTests&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Constructor_With_ValidParameters_Should_Create_Notification&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Constructor_With_Metadata_Should_Store_Metadata&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Constructor_With_CustomTimpestamp_Should_Store_Timestamp&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Constructor_With_NullOrEmptyMessage_Should_Throw_ArgumentNullException&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Constructor_With_NullOrEmptyMessage_Should_Throw_ArgumentException&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Constructor_Should_Intern_Id&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.WithId_Should_Create_New_NotificationMessage_With_Different_Id&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.WithType_Should_Create_New_NotificationMessage_With_Different_Type&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.WithMessage_Should_Create_New_NotificationMessage_With_Different_Message&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.WithMetadata_Should_Create_New_NotificationMessage_With_Metadata&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.With_Methods_Should_Preserve_Immutability&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Equals_With_Same_Values_Should_Return_True&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Equals_With_Different_Id_Should_Return_False&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Equals_With_Different_Type_Should_Return_False&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Equals_With_Different_Message_Should_Return_False&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Equals_With_Different_CreatedAt_Should_Return_False&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Equals_Ignores_Metadata&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Equals_With_Null_Should_Return_False&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.Equals_With_NonNotificationMessageObject_Should_Return_False&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.EqualityOperator_Should_Work_Correctly&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::2376DE9C-93E9-4C9D-BB23-95BB0EF76804::net9.0::Scribe.Notifications.Tests.Notifications.NotificationMessageTests.InequalityOperator_Should_Work_Correctly&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
