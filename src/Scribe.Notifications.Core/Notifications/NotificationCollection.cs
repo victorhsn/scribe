@@ -24,7 +24,6 @@ public sealed class NotificationCollection : INotificationStore
 
        using (_lock.EnterScope())
        {
-           _notifications ??= [];
            _notifications.Add(notification);
        }
     }
@@ -65,7 +64,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0) 
+            if (_notifications.Count == 0) 
                 return false;
             
             var index = _notifications.FindIndex(x => x.Id == notificationId);
@@ -84,7 +83,7 @@ public sealed class NotificationCollection : INotificationStore
         
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0) return 0;
+            if (_notifications.Count == 0) return 0;
             
             var removedCount = _notifications.RemoveAll(x => x.Type == notificationType);
             return removedCount;
@@ -96,7 +95,7 @@ public sealed class NotificationCollection : INotificationStore
     {
         using (_lock.EnterScope())
         {
-            _notifications?.Clear();
+            _notifications.Clear();
         }
     }
 
@@ -136,7 +135,7 @@ public sealed class NotificationCollection : INotificationStore
     {
         using (_lock.EnterScope())
         {
-            return _notifications != null && _notifications.Any(n => n.Type == NotificationType.Error);
+            return _notifications.Any(n => n.Type == NotificationType.Error);
         }
     }
     
@@ -145,7 +144,7 @@ public sealed class NotificationCollection : INotificationStore
     {
         using (_lock.EnterScope())
         {
-            return _notifications != null && _notifications.Any(n => n.Type == NotificationType.Warning);
+            return _notifications.Any(n => n.Type == NotificationType.Warning);
         }
     }
 
@@ -156,7 +155,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            return _notifications != null && _notifications.Any(n => n.Type == notificationType);
+            return _notifications.Any(n => n.Type == notificationType);
         }
     }
 
@@ -168,7 +167,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            return _notifications != null && _notifications.Any(n => n.Id == notificationId);
+            return _notifications.Any(n => n.Id == notificationId);
         }
     }
 
@@ -217,7 +216,7 @@ public sealed class NotificationCollection : INotificationStore
         
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 yield break;
             
             copy = new List<NotificationMessage>(_notifications);
@@ -235,7 +234,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 yield break;
 
             copy = new List<NotificationMessage>(_notifications
@@ -256,7 +255,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 copy = [];
             else 
                 copy = [.._notifications.Where(n => n.Type == NotificationType.Error)];
@@ -272,7 +271,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 copy = [];
             else
                 copy = [.._notifications.Where(n => n.Type == NotificationType.Warning)];
@@ -288,7 +287,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 copy = [];
             else
                 copy = [.._notifications.Where(n => n.Type == NotificationType.Info)];
@@ -304,7 +303,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 copy = [];
             else
                 copy = [.._notifications.Where(n => n.Type == NotificationType.Success)];
@@ -321,7 +320,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 return null;
 
             return _notifications.FirstOrDefault(n => n.Id == notificationId);
@@ -332,7 +331,7 @@ public sealed class NotificationCollection : INotificationStore
     {
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 return Array.Empty<NotificationMessage>();
 
             return _notifications.AsReadOnly();
@@ -345,7 +344,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 return Array.Empty<NotificationMessage>();
 
             return _notifications.Where(n => n.Type == notificationType).ToList().AsReadOnly();
@@ -356,7 +355,7 @@ public sealed class NotificationCollection : INotificationStore
     {
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 return Array.Empty<NotificationMessage>();
 
             return _notifications.Where(n => n.Type == NotificationType.Error).ToList().AsReadOnly();
@@ -367,7 +366,7 @@ public sealed class NotificationCollection : INotificationStore
     {
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 return Array.Empty<NotificationMessage>();
 
             return _notifications.Where(n => n.Type == NotificationType.Warning).ToList().AsReadOnly();
@@ -378,7 +377,7 @@ public sealed class NotificationCollection : INotificationStore
     {
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
             {
                 notifications = ReadOnlySpan<NotificationMessage>.Empty;
                 return false;
@@ -396,7 +395,7 @@ public sealed class NotificationCollection : INotificationStore
 
         using (_lock.EnterScope())
         {
-            if (_notifications == null || _notifications.Count == 0)
+            if (_notifications.Count == 0)
                 return 0;
 
             if (destination.Length < _notifications.Count)
