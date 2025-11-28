@@ -203,13 +203,27 @@ public sealed class NotificationCollection : INotificationStore
     /// <inheritdoc/>
     public int WarningCount()
     {
-        throw new NotImplementedException();
+        using (_lock.EnterScope())
+        {
+            return _notifications?.Count(n => n.Type == NotificationType.Warning) ?? 0;
+        }
     }
 
     /// <inheritdoc/>
     public IEnumerable<NotificationMessage> GetAll()
     {
-        throw new NotImplementedException();
+        List<NotificationMessage> copy;
+        
+        using (_lock.EnterScope())
+        {
+            if (_notifications == null || _notifications.Count == 0)
+                yield break;
+            
+            copy = new List<NotificationMessage>(_notifications);
+        }
+        
+        foreach (var notification in copy) 
+            yield return notification;
     }
 
     /// <inheritdoc/>
