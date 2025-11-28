@@ -229,7 +229,24 @@ public sealed class NotificationCollection : INotificationStore
     /// <inheritdoc/>
     public IEnumerable<NotificationMessage> GetByType(NotificationType notificationType)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(notificationType);
+        List<NotificationMessage> copy;
+
+        using (_lock.EnterScope())
+        {
+            if (_notifications == null || _notifications.Count == 0)
+                yield break;
+
+            copy = new List<NotificationMessage>(_notifications
+                .Where(n => n.Type == notificationType));
+
+        }
+        
+        foreach (var notification in copy)
+        {
+            if (notification.Type == notificationType)
+                yield return notification;
+        }
     }
 
     public IEnumerable<NotificationMessage> GetErrors()
