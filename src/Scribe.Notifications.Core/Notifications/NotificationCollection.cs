@@ -15,9 +15,6 @@ public sealed class NotificationCollection : INotificationStore
     /// <summary>
     /// Gets the number of notifications currently stored.
     /// </summary>
-    
-    //public int Count => _notifications?.Count ?? 0;
-    
     /// <inheritdoc/>
     public void Add(in NotificationMessage notification)
     {
