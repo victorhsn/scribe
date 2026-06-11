@@ -11,7 +11,7 @@ namespace Scribe.Notifications.Core.Notifications;
 public sealed class NotificationCollection : INotificationStore
 {
     private readonly Lock _lock = new();
-    private List<NotificationMessage> _notifications = [];
+    private readonly List<NotificationMessage> _notifications = [];
     
     /// <summary>
     /// Gets the number of notifications currently stored.
@@ -41,7 +41,7 @@ public sealed class NotificationCollection : INotificationStore
     }
 
     /// <inheritdoc/>
-    public ValueTask AddSync(NotificationMessage notification, CancellationToken cancellationToken = default)
+    public ValueTask AddAsync(NotificationMessage notification, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         Add(notification);
@@ -243,10 +243,7 @@ public sealed class NotificationCollection : INotificationStore
         }
         
         foreach (var notification in copy)
-        {
-            if (notification.Type == notificationType)
-                yield return notification;
-        }
+            yield return notification;
     }
 
     public IEnumerable<NotificationMessage> GetErrors()
@@ -373,6 +370,18 @@ public sealed class NotificationCollection : INotificationStore
         }
     }
 
+    /// <summary>
+    /// Tries to get all notifications as a span for zero-copy access and high performance.
+    /// </summary>
+    /// <remarks>
+    /// The returned span points directly to the internal backing array of the collection.
+    /// It is valid only as long as the collection is not modified after this call.
+    /// Any structural change (add, remove, clear) may cause the list to reallocate its
+    /// backing array, leaving the span pointing to stale memory.
+    /// In concurrent scenarios, prefer <see cref="GetAllAsList"/> for safe access.
+    /// </remarks>
+    /// <param name="notifications">When this method returns, contains a span of notifications if successful.</param>
+    /// <returns>True if the span was retrieved; otherwise, false.</returns>
     public bool TryGetAsSpan(out ReadOnlySpan<NotificationMessage> notifications)
     {
         using (_lock.EnterScope())

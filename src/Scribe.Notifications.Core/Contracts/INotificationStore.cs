@@ -27,7 +27,7 @@ public interface INotificationStore
     /// <param name="notification">The notification message to add.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns></returns>
-    ValueTask AddSync(NotificationMessage notification, CancellationToken cancellationToken = default);
+    ValueTask AddAsync(NotificationMessage notification, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Asynchronously adds multiple to the store.
@@ -208,8 +208,13 @@ public interface INotificationStore
 
     /// <summary>
     /// Tries to get all notifications as a span for zero-copy access and high performance.
-    /// This is useful for performance-critical scenarios.
     /// </summary>
+    /// <remarks>
+    /// The returned span is valid only as long as the collection is not modified.
+    /// Any call to <see cref="Add"/>, <see cref="AddRange"/>, <see cref="Remove"/>,
+    /// <see cref="RemoveByType"/> or <see cref="Clear"/> after this call may invalidate the span.
+    /// In concurrent scenarios, prefer <see cref="GetAllAsList"/> for safe access.
+    /// </remarks>
     /// <param name="notifications">When this method returns, contains a span of notifications if successful.</param>
     /// <returns>True if the span was retrieved; otherwise, false.</returns>
     bool TryGetAsSpan(out ReadOnlySpan<NotificationMessage> notifications);
