@@ -4,6 +4,22 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <PackageId>Scribe.Notifications</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Victor Hugo Nunes</Authors>
+    <Company>Victor Hugo Nunes</Company>
+    <Description>A high-performance Notification Pattern library for .NET with lazy evaluation, Flyweight caching, and Span support.</Description>
+    <PackageTags>notification;pattern;ddd;validation;performance;dotnet</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/victorhsn/scribe</RepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>
