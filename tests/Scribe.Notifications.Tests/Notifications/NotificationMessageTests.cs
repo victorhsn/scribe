@@ -19,7 +19,7 @@ public class NotificationMessageTests
     [Fact]
     public void Constructor_With_Metadata_Should_Store_Metadata()
     {
-        var metadata = new Dictionary<string, object> { { "field", "email" } };
+        var metadata = new Dictionary<string, object?> { { "field", "email" } };
 
         var notification = new NotificationMessage("USER_0001", NotificationType.Error, "Invalid Email", metadata);
 
@@ -31,7 +31,7 @@ public class NotificationMessageTests
     public void Constructor_With_CustomTimpestamp_Should_Store_Timestamp()
     {
         var timestamp = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        var metadata = new Dictionary<string, object> { { "field", "email" } };
+        var metadata = new Dictionary<string, object?> { { "field", "email" } };
 
         var notification = new NotificationMessage("USER_001", NotificationType.Error, "Invalid Email", timestamp, metadata);
 
@@ -46,7 +46,9 @@ public class NotificationMessageTests
     [InlineData(" ")]
     public void Constructor_With_NullOrEmptyMessage_Should_Throw_ArgumentNullException(string? invalidMessage)
     {
+#pragma warning disable CS8604
         Assert.Throws<ArgumentException>(() => new NotificationMessage("USER_001", NotificationType.Error, invalidMessage));
+#pragma warning disable CS8604
     }
 
     [Theory]
@@ -55,8 +57,10 @@ public class NotificationMessageTests
     [InlineData("   ")]
     public void Constructor_With_NullOrEmptyMessage_Should_Throw_ArgumentException(string? invalidMessage)
     {
+#pragma warning disable CS8604
         Assert.Throws<ArgumentException>(() =>
             new NotificationMessage("ID_001", NotificationType.Error, invalidMessage));
+#pragma warning disable CS8604
     }
 
     [Fact]
@@ -118,7 +122,7 @@ public class NotificationMessageTests
     public void WithMetadata_Should_Create_New_NotificationMessage_With_Metadata()
     {
         var original = new NotificationMessage("ID_001", NotificationType.Error, "Message");
-        var metadata = new Dictionary<string, object> { { "field", "email" } };
+        var metadata = new Dictionary<string, object?> { { "field", "email" } };
 
         var modified = original.WithMetadata(metadata);
 

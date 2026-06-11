@@ -1,5 +1,8 @@
 namespace Scribe.Notifications.Core.Notifications;
 
+/// <summary>
+/// Represents an immutable notification message with an identifier, type, message, timestamp, and optional metadata.
+/// </summary>
 public readonly struct NotificationMessage : IEquatable<NotificationMessage>
 {
     /// <summary>
@@ -26,7 +29,7 @@ public readonly struct NotificationMessage : IEquatable<NotificationMessage>
     /// Gets optional metadata associated with the notification.
     /// This is useful for storing additional context without modifying the core structure.
     /// </summary>
-    public IReadOnlyDictionary<string, object?> Metadata { get; }
+    public IReadOnlyDictionary<string, object?>? Metadata { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NotificationMessage"/> struct.
@@ -42,6 +45,18 @@ public readonly struct NotificationMessage : IEquatable<NotificationMessage>
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="NotificationMessage"/> struct without an explicit ID.
+    /// A unique identifier is generated automatically.
+    /// </summary>
+    /// <param name="type">The type of the notification.</param>
+    /// <param name="message">The message content.</param>
+    /// <exception cref="ArgumentException">Thrown when message is empty or whitespace.</exception>
+    public NotificationMessage(NotificationType type, string message)
+        : this(Guid.NewGuid().ToString(), type, message, DateTime.UtcNow, null)
+    {
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="NotificationMessage"/> struct with metadata.
     /// </summary>
     /// <param name="id">The unique identifier for the notification.</param>
@@ -50,11 +65,12 @@ public readonly struct NotificationMessage : IEquatable<NotificationMessage>
     /// <param name="metadata">Optional metadata dictionary.</param>
     /// <exception cref="ArgumentNullException">Thrown when id or message is null.</exception>
     /// <exception cref="ArgumentException">Thrown when id or message is empty or whitespace.</exception>
-    public NotificationMessage(string id, NotificationType type, string message, IReadOnlyDictionary<string, object>? metadata)
+    public NotificationMessage(string id, NotificationType type, string message, IReadOnlyDictionary<string, object?>? metadata)
         : this(id, type, message, DateTime.UtcNow, metadata)
     {
     }
 
+    /// <summary>
     /// Initializes a new instance of the <see cref="NotificationMessage"/> struct with a specific creation timestamp.
     /// </summary>
     /// <param name="id">The unique identifier for the notification.</param>
@@ -65,7 +81,7 @@ public readonly struct NotificationMessage : IEquatable<NotificationMessage>
     /// <exception cref="ArgumentNullException">Thrown when id or message is null.</exception>
     /// <exception cref="ArgumentException">Thrown when id or message is empty or whitespace.</exception>
     public NotificationMessage(string id, NotificationType type, string message, DateTime createdAt,
-        IReadOnlyDictionary<string, object>? metadata)
+        IReadOnlyDictionary<string, object?>? metadata)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Notification ID cannot be null, empty, or whitespace.", nameof(id));
@@ -105,7 +121,7 @@ public readonly struct NotificationMessage : IEquatable<NotificationMessage>
     /// <summary>
     /// Creates a new <see cref="NotificationMessage"/> with additional or updated metadata.
     /// </summary>
-    /// <param name="newMetadata">The new metadata dictionary.</param>
+    /// <param name="metadata">The new metadata dictionary.</param>
     /// <returns>A new notification message with the specified metadata.</returns>
     public NotificationMessage WithMetadata(IReadOnlyDictionary<string, object?> metadata) => new(Id, Type, Message, CreatedAt, metadata);
     /// <summary>

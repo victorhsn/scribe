@@ -2,6 +2,9 @@ using System.Collections.Frozen;
 
 namespace Scribe.Notifications.Core.Notifications;
 
+/// <summary>
+/// Represents a notification category with caching and Singleton semantics.
+/// </summary>
 public sealed class NotificationType : IEquatable<NotificationType>
 {
     /// <summary>

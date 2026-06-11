@@ -571,4 +571,16 @@ public sealed class NotificationCollection : INotificationStore
         cancellationToken.ThrowIfCancellationRequested();
         return new ValueTask<int>(Count(notificationType));
     }
+
+    /// <inheritdoc/>
+    public void Add(NotificationType type, string message)
+        => Add(new NotificationMessage(type, message));
+
+    /// <inheritdoc/>
+    public ValueTask AddAsync(NotificationType type, string message, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        Add(type, message);
+        return default;
+    }
 }

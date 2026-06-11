@@ -415,7 +415,7 @@ public class NotificationTypeTests
     }
 
     [Fact]
-    public void Concurrent_GetOrCreate_Should_Return_Same_Instance()
+    public async Task Concurrent_GetOrCreate_Should_Return_Same_Instance()
     {
         const int threadCount = 10;
         const int iterations = 100;
@@ -434,7 +434,7 @@ public class NotificationTypeTests
             });
         }
 
-        Task.WaitAll(tasks);
+        await Task.WhenAll(tasks);
 
         var firstInstance = results[0];
         for (var i = 1; i < results.Length; i++)
@@ -444,7 +444,7 @@ public class NotificationTypeTests
     }
 
     [Fact]
-    public void Concurrent_Predefined_Types_Access_Should_Always_Return_Singleton()
+    public async Task Concurrent_Predefined_Types_Access_Should_Always_Return_Singleton()
     {
         const int threadCount = 10;
         const int iterations = 100;
@@ -463,7 +463,7 @@ public class NotificationTypeTests
             });
         }
 
-        Task.WaitAll(tasks);
+        await Task.WhenAll(tasks);
 
         var firstInstance = results[0];
         for (var i = 1; i < results.Length; i++)

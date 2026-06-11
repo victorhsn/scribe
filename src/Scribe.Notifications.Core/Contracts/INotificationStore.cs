@@ -211,7 +211,7 @@ public interface INotificationStore
     /// </summary>
     /// <remarks>
     /// The returned span is valid only as long as the collection is not modified.
-    /// Any call to <see cref="Add"/>, <see cref="AddRange"/>, <see cref="Remove"/>,
+    /// Any call to <see cref="Add(in NotificationMessage)"/>, <see cref="AddRange"/>, <see cref="Remove"/>,
     /// <see cref="RemoveByType"/> or <see cref="Clear"/> after this call may invalidate the span.
     /// In concurrent scenarios, prefer <see cref="GetAllAsList"/> for safe access.
     /// </remarks>
@@ -259,4 +259,14 @@ public interface INotificationStore
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     ValueTask<int> CountAsync(NotificationType notificationType, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Adds a notification without an explicit ID. A unique identifier is generated automatically.
+    /// </summary>
+    void Add(NotificationType type, string message);
+
+    /// <summary>
+    /// Asynchronously adds a notification without an explicit ID.
+    /// </summary>
+    ValueTask AddAsync(NotificationType type, string message, CancellationToken cancellationToken = default);
 }
