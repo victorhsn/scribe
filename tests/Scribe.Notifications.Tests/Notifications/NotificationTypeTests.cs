@@ -435,14 +435,14 @@ public class NotificationTypeTests
         }
 
         Task.WaitAll(tasks);
-        
+
         var firstInstance = results[0];
         for (var i = 1; i < results.Length; i++)
         {
             Assert.Same(firstInstance, results[i]);
         }
     }
-    
+
     [Fact]
     public void Concurrent_Predefined_Types_Access_Should_Always_Return_Singleton()
     {
@@ -450,7 +450,7 @@ public class NotificationTypeTests
         const int iterations = 100;
         var results = new NotificationType[threadCount * iterations];
         var tasks = new Task[threadCount];
-        
+
         for (var t = 0; t < threadCount; t++)
         {
             var threadIndex = t;
@@ -464,7 +464,7 @@ public class NotificationTypeTests
         }
 
         Task.WaitAll(tasks);
-        
+
         var firstInstance = results[0];
         for (var i = 1; i < results.Length; i++)
         {
@@ -477,7 +477,7 @@ public class NotificationTypeTests
     {
         const int iterations = 1_000_000;
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        
+
         for (var i = 0; i < iterations; i++)
         {
             _ = NotificationType.Error;
@@ -487,8 +487,8 @@ public class NotificationTypeTests
         }
 
         stopwatch.Stop();
-        
-        Assert.True(stopwatch.ElapsedMilliseconds < 100, 
+
+        Assert.True(stopwatch.ElapsedMilliseconds < 100,
             $"Performance test failed: {iterations * 4} accesses took {stopwatch.ElapsedMilliseconds}ms");
     }
 
@@ -497,14 +497,14 @@ public class NotificationTypeTests
     {
         const int iterations = 100_000;
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        
+
         for (var i = 0; i < iterations; i++)
         {
             _ = NotificationType.GetOrCreate("error");
         }
 
         stopwatch.Stop();
-        
+
         Assert.True(stopwatch.ElapsedMilliseconds < 50,
             $"Performance test failed: {iterations} GetOrCreate calls took {stopwatch.ElapsedMilliseconds}ms");
     }

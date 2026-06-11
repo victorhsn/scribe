@@ -15,6 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Scribe.Notifications.Core/Scribe.Notifications.Core.csproj" />
-  </ItemGroup>>
+  </ItemGroup>
 
 </Project>

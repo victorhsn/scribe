@@ -10,22 +10,30 @@ namespace Scribe.Notifications.Core.Notifications;
 /// </summary>
 public sealed class NotificationCollection : INotificationStore
 {
+#if NET9_0_OR_GREATER
     private readonly Lock _lock = new();
+#else
+    private readonly object _lock = new();
+#endif
     private readonly List<NotificationMessage> _notifications = [];
-    
+
     /// <summary>
     /// Gets the number of notifications currently stored.
     /// </summary>
     /// <inheritdoc/>
     public void Add(in NotificationMessage notification)
     {
-       if (string.IsNullOrWhiteSpace(notification.Id))
-           throw new ArgumentException("Notification ID cannot be null, empty or whitespace", nameof(notification.Id));
+        if (string.IsNullOrWhiteSpace(notification.Id))
+            throw new ArgumentException("Notification ID cannot be null, empty or whitespace", nameof(notification.Id));
 
-       using (_lock.EnterScope())
-       {
-           _notifications.Add(notification);
-       }
+#if NET9_0_OR_GREATER
+        using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
+        {
+            _notifications.Add(notification);
+        }
     }
 
     /// <inheritdoc/>
@@ -34,7 +42,11 @@ public sealed class NotificationCollection : INotificationStore
         if (notifications.IsEmpty)
             return;
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             _notifications.AddRange(notifications.ToArray());
         }
@@ -62,15 +74,19 @@ public sealed class NotificationCollection : INotificationStore
         if (string.IsNullOrWhiteSpace(notificationId))
             throw new ArgumentException("Notification ID cannot be null, empty or whitespace", nameof(notificationId));
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
-            if (_notifications.Count == 0) 
+            if (_notifications.Count == 0)
                 return false;
-            
+
             var index = _notifications.FindIndex(x => x.Id == notificationId);
 
             if (index < 0) return false;
-            
+
             _notifications.RemoveAt(index);
             return true;
         }
@@ -80,11 +96,15 @@ public sealed class NotificationCollection : INotificationStore
     public int RemoveByType(NotificationType notificationType)
     {
         ArgumentNullException.ThrowIfNull(notificationType);
-        
+
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0) return 0;
-            
+
             var removedCount = _notifications.RemoveAll(x => x.Type == notificationType);
             return removedCount;
         }
@@ -93,7 +113,11 @@ public sealed class NotificationCollection : INotificationStore
     /// <inheritdoc/>
     public void Clear()
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             _notifications.Clear();
         }
@@ -124,7 +148,11 @@ public sealed class NotificationCollection : INotificationStore
     /// <inheritdoc/>
     public bool HasNotifications()
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             return _notifications is { Count: > 0 };
         }
@@ -133,16 +161,24 @@ public sealed class NotificationCollection : INotificationStore
     /// <inheritdoc/>
     public bool HasErrors()
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             return _notifications.Any(n => n.Type == NotificationType.Error);
         }
     }
-    
+
     /// <inheritdoc/>
     public bool HasWarnings()
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             return _notifications.Any(n => n.Type == NotificationType.Warning);
         }
@@ -153,7 +189,11 @@ public sealed class NotificationCollection : INotificationStore
     {
         ArgumentNullException.ThrowIfNull(notificationType);
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             return _notifications.Any(n => n.Type == notificationType);
         }
@@ -162,10 +202,14 @@ public sealed class NotificationCollection : INotificationStore
     /// <inheritdoc/>
     public bool Contains(string notificationId)
     {
-        if (string.IsNullOrWhiteSpace(notificationId)) 
+        if (string.IsNullOrWhiteSpace(notificationId))
             throw new ArgumentException("Notification ID cannot be null, empty or whitespace", nameof(notificationId));
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             return _notifications.Any(n => n.Id == notificationId);
         }
@@ -174,7 +218,11 @@ public sealed class NotificationCollection : INotificationStore
     /// <inheritdoc/>
     public int Count()
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             return _notifications?.Count ?? 0;
         }
@@ -185,16 +233,24 @@ public sealed class NotificationCollection : INotificationStore
     {
         ArgumentNullException.ThrowIfNull(notificationType);
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
-            return _notifications?.Count(n  => n.Type == notificationType) ?? 0;
+            return _notifications?.Count(n => n.Type == notificationType) ?? 0;
         }
     }
 
     /// <inheritdoc/>
     public int ErrorCount()
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             return _notifications?.Count(n => n.Type == NotificationType.Error) ?? 0;
         }
@@ -203,7 +259,11 @@ public sealed class NotificationCollection : INotificationStore
     /// <inheritdoc/>
     public int WarningCount()
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             return _notifications?.Count(n => n.Type == NotificationType.Warning) ?? 0;
         }
@@ -213,16 +273,17 @@ public sealed class NotificationCollection : INotificationStore
     public IEnumerable<NotificationMessage> GetAll()
     {
         List<NotificationMessage> copy;
-        
+
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
-            if (_notifications.Count == 0)
-                yield break;
-            
-            copy = new List<NotificationMessage>(_notifications);
+            copy = _notifications.Count == 0 ? [] : [.. _notifications];
         }
-        
-        foreach (var notification in copy) 
+
+        foreach (var notification in copy)
             yield return notification;
     }
 
@@ -232,16 +293,23 @@ public sealed class NotificationCollection : INotificationStore
         ArgumentNullException.ThrowIfNull(notificationType);
         List<NotificationMessage> copy;
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
-                yield break;
-
-            copy = new List<NotificationMessage>(_notifications
-                .Where(n => n.Type == notificationType));
+                copy = [];
+            else
+                copy =
+                [
+                    .._notifications
+                        .Where(n => n.Type == notificationType)
+                ];
 
         }
-        
+
         foreach (var notification in copy)
             yield return notification;
     }
@@ -250,12 +318,16 @@ public sealed class NotificationCollection : INotificationStore
     {
         List<NotificationMessage> copy;
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
                 copy = [];
-            else 
-                copy = [.._notifications.Where(n => n.Type == NotificationType.Error)];
+            else
+                copy = [.. _notifications.Where(n => n.Type == NotificationType.Error)];
         }
 
         foreach (var notification in copy)
@@ -266,14 +338,18 @@ public sealed class NotificationCollection : INotificationStore
     {
         List<NotificationMessage> copy;
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
                 copy = [];
             else
-                copy = [.._notifications.Where(n => n.Type == NotificationType.Warning)];
+                copy = [.. _notifications.Where(n => n.Type == NotificationType.Warning)];
         }
-        
+
         foreach (var notification in copy)
             yield return notification;
     }
@@ -282,12 +358,16 @@ public sealed class NotificationCollection : INotificationStore
     {
         List<NotificationMessage> copy;
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
                 copy = [];
             else
-                copy = [.._notifications.Where(n => n.Type == NotificationType.Info)];
+                copy = [.. _notifications.Where(n => n.Type == NotificationType.Info)];
         }
 
         foreach (var notification in copy)
@@ -298,12 +378,16 @@ public sealed class NotificationCollection : INotificationStore
     {
         List<NotificationMessage> copy;
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
                 copy = [];
             else
-                copy = [.._notifications.Where(n => n.Type == NotificationType.Success)];
+                copy = [.. _notifications.Where(n => n.Type == NotificationType.Success)];
         }
 
         foreach (var notification in copy)
@@ -315,7 +399,11 @@ public sealed class NotificationCollection : INotificationStore
         if (string.IsNullOrWhiteSpace(notificationId))
             throw new ArgumentException("Notification ID cannot be null, empty or whitespace", nameof(notificationId));
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
                 return null;
@@ -326,12 +414,16 @@ public sealed class NotificationCollection : INotificationStore
 
     public IReadOnlyList<NotificationMessage> GetAllAsList()
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
                 return Array.Empty<NotificationMessage>();
 
-            return _notifications.AsReadOnly();
+            return _notifications.ToList().AsReadOnly();
         }
     }
 
@@ -339,7 +431,11 @@ public sealed class NotificationCollection : INotificationStore
     {
         ArgumentNullException.ThrowIfNull(notificationType);
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
                 return Array.Empty<NotificationMessage>();
@@ -350,7 +446,11 @@ public sealed class NotificationCollection : INotificationStore
 
     public IReadOnlyList<NotificationMessage> GetErrorsAsList()
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
                 return Array.Empty<NotificationMessage>();
@@ -361,7 +461,11 @@ public sealed class NotificationCollection : INotificationStore
 
     public IReadOnlyList<NotificationMessage> GetWarningsAsList()
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
                 return Array.Empty<NotificationMessage>();
@@ -384,7 +488,11 @@ public sealed class NotificationCollection : INotificationStore
     /// <returns>True if the span was retrieved; otherwise, false.</returns>
     public bool TryGetAsSpan(out ReadOnlySpan<NotificationMessage> notifications)
     {
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
             {
@@ -402,7 +510,11 @@ public sealed class NotificationCollection : INotificationStore
         if (destination.IsEmpty)
             throw new ArgumentException("Destination span cannot be empty.", nameof(destination));
 
+#if NET9_0_OR_GREATER
         using (_lock.EnterScope())
+#else
+        lock (_lock)
+#endif
         {
             if (_notifications.Count == 0)
                 return 0;

@@ -89,7 +89,7 @@ public interface INotificationStore
     /// </summary>
     /// <returns>True if the store has error notifications; otherwise, false</returns>
     bool HasErrors();
-    
+
     /// <summary>
     /// Determines whether the store contains any notifications of type Warning.
     /// </summary>

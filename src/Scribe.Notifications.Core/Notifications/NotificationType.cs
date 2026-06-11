@@ -78,7 +78,11 @@ public sealed class NotificationType : IEquatable<NotificationType>
     /// <summary>
     /// Cache for custom notification types created at runtime.
     /// </summary>
+#if NET9_0_OR_GREATER
     private static readonly Lock CustomTypesLock = new();
+#else
+    private static readonly object CustomTypesLock = new();
+#endif
     private static Dictionary<string, NotificationType>? _customTypesCache;
 
     /// <summary>
@@ -105,7 +109,11 @@ public sealed class NotificationType : IEquatable<NotificationType>
         if (PredefinedTypesCache.TryGetValue(name, out var predefinedType))
             return predefinedType;
 
+#if NET9_0_OR_GREATER
         using (CustomTypesLock.EnterScope())
+#else
+        lock (CustomTypesLock)
+#endif
         {
             _customTypesCache ??= new Dictionary<string, NotificationType>(StringComparer.OrdinalIgnoreCase);
 
@@ -145,7 +153,11 @@ public sealed class NotificationType : IEquatable<NotificationType>
 
         var type = new NotificationType(name, displayName, severityLevel, isFailure);
 
+#if NET9_0_OR_GREATER
         using (CustomTypesLock.EnterScope())
+#else
+        lock (CustomTypesLock)
+#endif
         {
             _customTypesCache ??= new Dictionary<string, NotificationType>(StringComparer.OrdinalIgnoreCase);
 
