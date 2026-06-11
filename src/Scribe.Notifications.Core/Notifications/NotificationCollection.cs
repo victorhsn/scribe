@@ -314,6 +314,7 @@ public sealed class NotificationCollection : INotificationStore
             yield return notification;
     }
 
+    /// <inheritdoc />
     public IEnumerable<NotificationMessage> GetErrors()
     {
         List<NotificationMessage> copy;
@@ -334,6 +335,7 @@ public sealed class NotificationCollection : INotificationStore
             yield return notification;
     }
 
+    /// <inheritdoc />
     public IEnumerable<NotificationMessage> GetWarnings()
     {
         List<NotificationMessage> copy;
@@ -354,6 +356,7 @@ public sealed class NotificationCollection : INotificationStore
             yield return notification;
     }
 
+    /// <inheritdoc />
     public IEnumerable<NotificationMessage> GetInfos()
     {
         List<NotificationMessage> copy;
@@ -374,6 +377,7 @@ public sealed class NotificationCollection : INotificationStore
             yield return notification;
     }
 
+    /// <inheritdoc />
     public IEnumerable<NotificationMessage> GetSuccesses()
     {
         List<NotificationMessage> copy;
@@ -394,6 +398,7 @@ public sealed class NotificationCollection : INotificationStore
             yield return notification;
     }
 
+    /// <inheritdoc />
     public NotificationMessage? GetById(string notificationId)
     {
         if (string.IsNullOrWhiteSpace(notificationId))
@@ -412,6 +417,7 @@ public sealed class NotificationCollection : INotificationStore
         }
     }
 
+    /// <inheritdoc />
     public IReadOnlyList<NotificationMessage> GetAllAsList()
     {
 #if NET9_0_OR_GREATER
@@ -427,6 +433,7 @@ public sealed class NotificationCollection : INotificationStore
         }
     }
 
+    /// <inheritdoc />
     public IReadOnlyList<NotificationMessage> GetByTypeAsList(NotificationType notificationType)
     {
         ArgumentNullException.ThrowIfNull(notificationType);
@@ -444,6 +451,7 @@ public sealed class NotificationCollection : INotificationStore
         }
     }
 
+    /// <inheritdoc />
     public IReadOnlyList<NotificationMessage> GetErrorsAsList()
     {
 #if NET9_0_OR_GREATER
@@ -459,6 +467,7 @@ public sealed class NotificationCollection : INotificationStore
         }
     }
 
+    /// <inheritdoc />
     public IReadOnlyList<NotificationMessage> GetWarningsAsList()
     {
 #if NET9_0_OR_GREATER
@@ -505,6 +514,7 @@ public sealed class NotificationCollection : INotificationStore
         }
     }
 
+    /// <inheritdoc />
     public int CopyToSpan(Span<NotificationMessage> destination)
     {
         if (destination.IsEmpty)
@@ -527,30 +537,35 @@ public sealed class NotificationCollection : INotificationStore
         }
     }
 
+    /// <inheritdoc />
     public ValueTask<bool> HasNotificationsAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return new ValueTask<bool>(HasNotifications());
     }
 
+    /// <inheritdoc />
     public ValueTask<bool> HasErrorsAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return new ValueTask<bool>(HasErrors());
     }
 
+    /// <inheritdoc />
     public ValueTask<bool> HasWarningsAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return new ValueTask<bool>(HasWarnings());
     }
 
+    /// <inheritdoc />
     public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return new ValueTask<int>(Count());
     }
 
+    /// <inheritdoc />
     public ValueTask<int> CountAsync(NotificationType notificationType, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
