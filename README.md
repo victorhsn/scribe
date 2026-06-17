@@ -1,56 +1,97 @@
-# Scribe.Notifications
-
-[![NuGet](https://img.shields.io/nuget/v/Scribe.Notifications.svg)](https://www.nuget.org/packages/Scribe.Notifications)
-[![NuGet Downloads](https://img.shields.io/nuget/dt/Scribe.Notifications.svg)](https://www.nuget.org/packages/Scribe.Notifications)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![.NET](https://img.shields.io/badge/.NET-8%20%7C%209%20%7C%2010-purple.svg)](https://dotnet.microsoft.com)
-
-A high-performance **Notification Pattern** library for .NET. Simple, focused, and built for demanding workloads.
+<p align="center">
+  <img src="docs/images/scribe-logo-v1.png" width="220" alt="Scribe.Notifications" />
+</p>
+<p align="center">
+  High-performance Notification Pattern for .NET.
+</p>
+<p align="center">
+  <strong>Record, don't throw.</strong>
+</p>
+<p align="center">
+  Collect validation failures, warnings and domain notifications without relying on exceptions.
+</p>
+<p align="center">
+  <a href="https://www.nuget.org/packages/Scribe.Notifications">
+    <img src="https://img.shields.io/nuget/v/Scribe.Notifications.svg" />
+  </a>
+  <a href="https://www.nuget.org/packages/Scribe.Notifications">
+    <img src="https://img.shields.io/nuget/dt/Scribe.Notifications.svg" />
+  </a>
+  <img src="https://img.shields.io/badge/.NET-8%20%7C%209%20%7C%2010-purple.svg" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+</p>
 
 ---
 
-## What is Scribe.Notifications?
+## What is Scribe?
 
-Scribe.Notifications is a library that implements the **Notification Pattern**. Instead of throwing exceptions for expected validation failures, you collect notifications and inspect them at the end of an operation. This results in cleaner code, better performance, and richer feedback to the caller.
+Scribe.Notifications is a high-performance implementation of the Notification Pattern for .NET.
 
-The library is built around three core principles:
+Instead of throwing exceptions for expected validation failures, Scribe collects notifications and allows callers to inspect them at the end of an operation.
 
-- **Performance first**: lazy evaluation, Flyweight caching, string interning, and `Span<T>` support minimize allocations and maximize throughput
-- **Focused**: does one thing well, with no external dependencies
-- **Thread-safe**: safe for concurrent workloads out of the box
+This approach produces:
+
+* Cleaner domain code
+* Better performance
+* Richer validation feedback
+* Improved observability
+* Better separation between validation and control flow
 
 ---
-## Architecture
+
+## Why Scribe?
+
+Using exceptions for expected validation scenarios has drawbacks:
+
+* Exceptions are expensive
+* Only the first failure is returned
+* Aggregating failures becomes difficult
+* Validation logic leaks into control flow
+
+Instead of this:
+
+```csharp
+throw new ValidationException("Email is invalid.");
 ```
-┌─────────────────────────────────────────────┐
-│              INotificationStore              │  ← contract
-└─────────────────────┬───────────────────────┘
-                      │ implements
-                      ▼
-┌─────────────────────────────────────────────┐
-│           NotificationCollection            │  ← thread-safe, lazy
-│                                             │
-│  Add / AddRange / AddAsync                  │
-│  Remove / RemoveByType / Clear              │
-│  GetErrors()      → IEnumerable  (lazy)     │
-│  GetErrorsAsList() → IReadOnlyList          │
-│  TryGetAsSpan()   → ReadOnlySpan (zero-copy)│
-└─────────────────────┬───────────────────────┘
-                      │ contains
-             ┌────────┴────────┐
-             ▼                 ▼
-┌────────────────────┐ ┌──────────────────────┐
-│ NotificationMessage│ │   NotificationType   │
-│  (readonly struct) │ │     (singleton)      │
-│                    │ │                      │
-│  Id (optional)     │ │  Error   (100, fail) │
-│  Type              │ │  Warning  (60)       │
-│  Message           │ │  Info     (20)       │
-│  CreatedAt         │ │  Success   (0)       │
-│  Metadata          │ │  + custom types      │
-└────────────────────┘ └──────────────────────┘
+
+Use this:
+
+```csharp
+notifications.Add(
+    new NotificationMessage(
+        "USER_EMAIL_INVALID",
+        NotificationType.Error,
+        "Email is invalid."
+    )
+);
 ```
+
+Scribe enables you to:
+
+* Collect all validation failures
+* Return rich feedback
+* Attach metadata
+* Improve diagnostics
+* Avoid exception-driven validation flows
+
 ---
+
+## Features
+
+* High-performance Notification Pattern implementation
+* Thread-safe notification storage
+* Immutable readonly struct notifications
+* Lazy evaluation APIs
+* Span\<T\> support
+* Async APIs powered by ValueTask
+* Custom notification types
+* Rich metadata support
+* String interning optimizations
+* FrozenDictionary-backed type registry
+* Zero external dependencies
+
+---
+
 ## Installation
 
 ```bash
@@ -66,194 +107,169 @@ using Scribe.Notifications.Core.Notifications;
 
 var notifications = new NotificationCollection();
 
-// Quick add, ID is generated automatically
-notifications.Add(NotificationType.Error, "Email is invalid.");
-notifications.Add(NotificationType.Warning, "Name is too short.");
+notifications.Add(
+    NotificationType.Error,
+    "Email is invalid."
+);
 
-// With explicit ID, recommended when observability matters
-notifications.Add(new NotificationMessage("USER_EMAIL_INVALID", NotificationType.Error, "Email is invalid."));
+notifications.Add(
+    NotificationType.Warning,
+    "Name is too short."
+);
 
-// Check and react
 if (notifications.HasErrors())
 {
     foreach (var error in notifications.GetErrors())
-        Console.WriteLine(error); // [USER_EMAIL_INVALID] Error: Email is invalid.
+    {
+        Console.WriteLine(error);
+    }
 }
 ```
 
+---
+
+## Real World Example
+
+```csharp
+public NotificationCollection ValidateUser(
+    string email,
+    int age)
+{
+    var notifications = new NotificationCollection();
+
+    if (string.IsNullOrWhiteSpace(email))
+    {
+        notifications.Add(
+            new NotificationMessage(
+                "USER_EMAIL_REQUIRED",
+                NotificationType.Error,
+                "Email is required."
+            )
+        );
+    }
+
+    if (age < 18)
+    {
+        notifications.Add(
+            new NotificationMessage(
+                "USER_AGE_INVALID",
+                NotificationType.Error,
+                "User must be at least 18 years old."
+            )
+        );
+    }
+
+    return notifications;
+}
+```
+
+---
+
+## Performance
+
+Scribe was designed for high-throughput applications.
+
+Performance optimizations include:
+
+* readonly struct notifications
+* String interning
+* Flyweight caching
+* FrozenDictionary lookups
+* Lazy evaluation
+* Span\<T\> support
+* ValueTask APIs
+
+### Benchmarks
+
+| Scenario                        | Mean           | Allocated |
+|---------------------------------| -------------- | --------- |
+| Add with explicit ID            | 91.06 ns       | 264 B     |
+| Add without ID (auto-generated) | 1,278.79 ns    | 368 B     |
+| HasErrors 2,000 items           | 12.96 ns       | —         |
+| HasErrors empty collection      | 12.88 ns       | —         |
+| GetErrors lazy 1,000 errors     | 48,103.83 ns   | 78.4 KB   |
+| GetErrorsAsList materialized    | 19,797.52 ns   | 78.3 KB   |
+| TryGetAsSpan zero-copy          | 14.83 ns       | —         |
+| AddRange 100 items              | 129,835.13 ns  | 25.9 KB   |
+
+Environment:
+
+* BenchmarkDotNet v0.14.0
+* .NET 10.0.2 Arm64
+* Apple M1 Pro, 8 cores
 ---
 
 ## Core Concepts
 
 ### NotificationMessage
 
-An immutable `readonly struct` that represents a single notification. Because it is a struct, instances are stack-allocated with no heap pressure for the common case.
+Immutable readonly struct representing a single notification.
 
 ```csharp
-// Without explicit ID: a unique identifier is generated automatically
-var notification = new NotificationMessage(NotificationType.Error, "Order amount must be greater than zero.");
-
-// With explicit ID: recommended for tracing and observability
 var notification = new NotificationMessage(
-    id: "ORDER_AMOUNT_INVALID",
-    type: NotificationType.Error,
-    message: "Order amount must be greater than zero."
-);
-
-// Attach contextual metadata without breaking immutability
-var withContext = notification.WithMetadata(
-    new Dictionary<string, object?> { { "field", "amount" }, { "value", -5 } }
+    "ORDER_AMOUNT_INVALID",
+    NotificationType.Error,
+    "Order amount must be greater than zero."
 );
 ```
 
-**Key characteristics:**
-- Immutable: all properties are set at construction
-- Optional ID: omit it for quick usage; a unique identifier is generated automatically
-- `With*` methods return new instances, never mutate
-- IDs are automatically interned: 10,000 notifications with the same ID use one string in memory
-- Implements `IEquatable<T>` with value semantics
-
----
-
 ### NotificationType
 
-A singleton type that represents a category of notification. Predefined types are stored in a `FrozenDictionary` for allocation-free, thread-safe lookups. Custom types are created on demand and cached. The same configuration always returns the same instance.
+Represents notification categories.
 
-**Predefined types:**
+Built-in types:
 
 | Type    | Severity | IsFailure |
-|---------|----------|-----------|
+| ------- | -------- | --------- |
 | Error   | 100      | true      |
 | Warning | 60       | false     |
 | Info    | 20       | false     |
 | Success | 0        | false     |
 
+Custom types:
+
 ```csharp
-// Predefined singletons
-var error = NotificationType.Error;
-var warning = NotificationType.Warning;
-
-// Custom types, cached by composite key (name + displayName + severity + isFailure)
 var critical = NotificationType.GetOrCreate(
-    name: "critical",
-    displayName: "Critical Error",
-    severityLevel: 95,
-    isFailure: true
+    "critical",
+    "Critical Error",
+    95,
+    true
 );
-
-// Same parameters always return the same instance
-var same = NotificationType.GetOrCreate("critical", "Critical Error", 95, true);
-Assert.Same(critical, same); // true
-
-// Look up a predefined type by name
-if (NotificationType.TryGetPredefinedType("error", out var type))
-    Console.WriteLine(type.SeverityLevel); // 100
 ```
-
----
 
 ### NotificationCollection
 
-A thread-safe collection that implements `INotificationStore`. Designed for both high-concurrency and high-throughput scenarios.
-
-**Adding notifications:**
+Thread-safe notification store.
 
 ```csharp
 var notifications = new NotificationCollection();
 
-// Quick add. ID generated automatically
-notifications.Add(NotificationType.Error, "Something went wrong.");
+notifications.Add(
+    NotificationType.Error,
+    "Something went wrong."
+);
 
-// Explicit ID. recommended for tracing and observability
-notifications.Add(new NotificationMessage("ID_001", NotificationType.Error, "Something went wrong."));
-
-// Batch add
-ReadOnlySpan<NotificationMessage> batch = stackalloc NotificationMessage[]
-{
-    new("ID_002", NotificationType.Warning, "Low disk space."),
-    new("ID_003", NotificationType.Info, "Cache refreshed.")
-};
-notifications.AddRange(batch);
-
-// Async add
-await notifications.AddAsync(NotificationType.Warning, "Low disk space.");
-await notifications.AddAsync(new NotificationMessage("ID_004", NotificationType.Error, "Timeout."));
-```
-
-**Querying with lazy evaluation:**
-
-Lazy methods use `yield return` and do not allocate a new list. Prefer them when iterating once.
-
-```csharp
-// Check presence
 bool hasErrors = notifications.HasErrors();
-bool hasWarnings = notifications.HasWarnings();
-int total = notifications.Count();
-
-// Lazy enumeration (no intermediate list allocation)
-foreach (var error in notifications.GetErrors())
-    Console.WriteLine(error.Message);
-
-foreach (var item in notifications.GetByType(NotificationType.Warning))
-    Process(item);
-```
-
-**Querying materialized lists:**
-
-Use these when you need to pass the result to another method, serialize it, or access it multiple times.
-
-```csharp
-IReadOnlyList<NotificationMessage> errors = notifications.GetErrorsAsList();
-IReadOnlyList<NotificationMessage> all = notifications.GetAllAsList();
-```
-
-**High-performance zero-copy access:**
-
-For performance-critical paths where you need direct access to the underlying data without any allocation:
-
-```csharp
-if (notifications.TryGetAsSpan(out ReadOnlySpan<NotificationMessage> span))
-{
-    // Direct access to the backing array, zero allocation.
-    for (int i = 0; i < span.Length; i++)
-        Process(span[i]);
-}
-```
-
-> ⚠️ The span is valid only as long as the collection is not modified. In concurrent scenarios, use `GetAllAsList()` instead.
-
-**Removing notifications:**
-
-```csharp
-// Remove by ID
-bool removed = notifications.Remove("ID_001");
-
-// Remove all of a type
-int count = notifications.RemoveByType(NotificationType.Warning);
-
-// Clear everything
-notifications.Clear();
 ```
 
 ---
 
-## Async Support
-
-All mutating and querying operations have async counterparts returning `ValueTask`, zero allocation in the synchronous fast path.
+## ASP.NET Minimal API Example
 
 ```csharp
-// Quick async add
-await notifications.AddAsync(NotificationType.Error, "Something went wrong.");
+app.MapPost("/users", (CreateUserRequest request) =>
+{
+    var notifications = Validate(request);
 
-// Explicit ID async add
-await notifications.AddAsync(new NotificationMessage("ID_001", NotificationType.Error, "Timeout."));
-await notifications.AddRangeAsync(batch);
+    if (notifications.HasErrors())
+    {
+        return Results.BadRequest(
+            notifications.GetErrorsAsList()
+        );
+    }
 
-bool hasErrors = await notifications.HasErrorsAsync();
-int count = await notifications.CountAsync();
-
-bool removed = await notifications.RemoveAsync("ID_001");
-await notifications.ClearAsync();
+    return Results.Ok();
+});
 ```
 
 ---
@@ -261,7 +277,6 @@ await notifications.ClearAsync();
 ## Custom Notification Types
 
 ```csharp
-// Register a domain-specific type
 var blocked = NotificationType.GetOrCreate(
     name: "blocked",
     displayName: "Blocked",
@@ -269,18 +284,20 @@ var blocked = NotificationType.GetOrCreate(
     isFailure: true
 );
 
-notifications.Add(new NotificationMessage("ACC_BLOCKED", blocked, "Account is blocked."));
-
-// Query by custom type
-foreach (var n in notifications.GetByType(blocked))
-    Console.WriteLine(n);
+notifications.Add(
+    new NotificationMessage(
+        "ACCOUNT_BLOCKED",
+        blocked,
+        "Account is blocked."
+    )
+);
 ```
 
 ---
 
 ## Implementing INotificationStore
 
-You can build your own store by implementing `INotificationStore`, useful for decorating with persistence, telemetry, or custom routing.
+You can build your own store by implementing `INotificationStore`, useful for decorating with logging, telemetry, or custom routing.
 
 ```csharp
 public class LoggingNotificationStore : INotificationStore
@@ -300,7 +317,7 @@ public class LoggingNotificationStore : INotificationStore
         _inner.Add(notification);
     }
 
-    // ... delegate remaining members to _inner
+    // Implement remaining INotificationStore members by delegating to _inner
 }
 ```
 
@@ -308,19 +325,35 @@ public class LoggingNotificationStore : INotificationStore
 
 ## Roadmap
 
-- **v1.1** `NotificationRules`: reusable, registrable validation rules with a fluent builder
-- **v1.2** Grouping & Aggregation: `GroupBy`, `OrderBySeverity`, and filtering extensions
-- **v1.3** Localization: multi-language message support with `.resx` integration
-- **v2.0** Observability: built-in OpenTelemetry integration with automatic metrics per operation
+### v1.1
+* NotificationRules
+* Fluent rule builder
+
+### v1.2
+* Grouping and aggregation APIs
+* Severity ordering
+* Filtering extensions
+
+### v1.3
+* Localization
+* .resx integration
+
+### v2.0
+* OpenTelemetry integration
+* Metrics and diagnostics
 
 ---
 
 ## Contributing
 
-Contributions are welcome. Please open an issue first to discuss what you'd like to change.
+Contributions are welcome.
+
+If you have suggestions, bug reports, or feature requests, please open an issue first so we can discuss the proposal.
 
 ---
 
 ## License
 
-MIT. See [LICENSE](LICENSE) for details.
+MIT License.
+
+See [LICENSE](LICENSE) for details.
