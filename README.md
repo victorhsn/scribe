@@ -326,8 +326,7 @@ public class LoggingNotificationStore : INotificationStore
 ## Roadmap
 
 ### v1.1
-* NotificationRules
-* Fluent rule builder
+* Checks
 
 ### v1.2
 * Grouping and aggregation APIs
