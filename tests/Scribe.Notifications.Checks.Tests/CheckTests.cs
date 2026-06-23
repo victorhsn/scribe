@@ -63,7 +63,7 @@ public class CheckTests
     [Fact]
     public void From_With_Null_Should_Throw_ArgumentNullException()
     {
-        Assert.Throws<ArgumentNullException>(() => Check.From(null));
+        Assert.Throws<ArgumentNullException>(() => Check.From(null!));
     }
     
     [Fact]
