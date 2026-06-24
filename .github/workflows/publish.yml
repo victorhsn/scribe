@@ -11,13 +11,14 @@ jobs:
 
     permissions:
       id-token: write
+      contents: read
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.x'
 
@@ -31,7 +32,9 @@ jobs:
         run: dotnet test -c Release --no-restore
 
       - name: Pack
-        run: dotnet pack src/Scribe.Notifications.Core/Scribe.Notifications.Core.csproj -c Release --no-restore --output ./artifacts
+        run: |
+          dotnet pack src/Scribe.Notifications.Core/Scribe.Notifications.Core.csproj -c Release --no-restore --output ./artifacts
+          dotnet pack src/Scribe.Notifications.Checks/Scribe.Notifications.Checks.csproj -c Release --no-restore --output ./artifacts
 
       - name: Push to NuGet (Trusted Publishing)
         run: |
