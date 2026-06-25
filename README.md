@@ -92,10 +92,23 @@ Scribe enables you to:
 
 ---
 
+## Packages
+
+| Package | Version | Description                              |
+| ------- | ------- |------------------------------------------|
+| [`Scribe.Notifications`](https://www.nuget.org/packages/Scribe.Notifications) | [![NuGet](https://img.shields.io/nuget/v/Scribe.Notifications.svg)](https://www.nuget.org/packages/Scribe.Notifications) | Core Notification Pattern implementation |
+| [`Scribe.Notifications.Checks`](https://www.nuget.org/packages/Scribe.Notifications.Checks) | [![NuGet](https://img.shields.io/nuget/v/Scribe.Notifications.Checks.svg)](https://www.nuget.org/packages/Scribe.Notifications.Checks) | Reusable, observable domain checks       |
+
+---
+
 ## Installation
 
 ```bash
+# Core
 dotnet add package Scribe.Notifications
+
+# Checks (optional)
+dotnet add package Scribe.Notifications.Checks
 ```
 
 ---
@@ -295,6 +308,54 @@ notifications.Add(
 
 ---
 
+## Checks
+
+`Scribe.Notifications.Checks` brings reusable, observable domain validations built on top of the Notification Pattern.
+
+Instead of duplicating business rules across services, you encapsulate them once and apply them anywhere:
+
+```csharp
+using Scribe.Notifications.Checks;
+using Scribe.Notifications.Checks.Extensions;
+
+notifications.Apply(UserChecks.EmailMustBeValid(email));
+notifications.Apply(UserChecks.MustBeAdult(age));
+
+await notifications.ApplyAsync(UserChecks.EmailNotAlreadyTakenAsync(email, ct));
+```
+
+A Check is the observable result of a domain validation, it carries zero or more notifications produced during evaluation. 
+
+```csharp
+public static class UserChecks
+{
+    public static Check EmailMustBeValid(string email) =>
+        email.Contains('@')
+            ? Check.Pass()
+            : Check.Fail("USER_EMAIL_INVALID", NotificationType.Error, "Email is invalid.");
+
+    public static async ValueTask<Check> EmailNotAlreadyTakenAsync(string email, CancellationToken ct)
+    {
+        var exists = await _repository.ExistsAsync(email, ct);
+        return exists
+            ? Check.Fail("USER_EMAIL_TAKEN", NotificationType.Error, "Email is already taken.")
+            : Check.Pass();
+    }
+}
+```
+
+Apply multiple checks at once, all evaluated regardless of previous failures:
+
+```csharp
+notifications.ApplyAll([
+    UserChecks.EmailMustBeValid(request.Email),
+    UserChecks.MustBeAdult(request.Age),
+    UserChecks.NameMustNotBeEmpty(request.Name)
+]);
+```
+
+---
+
 ## Implementing INotificationStore
 
 You can build your own store by implementing `INotificationStore`, useful for decorating with logging, telemetry, or custom routing.
@@ -325,8 +386,8 @@ public class LoggingNotificationStore : INotificationStore
 
 ## Roadmap
 
-### v1.1
-* Checks
+### v1.1 ✅
+* `Scribe.Notifications.Checks` reusable, observable domain checks
 
 ### v1.2
 * Grouping and aggregation APIs
