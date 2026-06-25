@@ -7,7 +7,7 @@
         <LangVersion>latest</LangVersion>
 
         <PackageId>Scribe.Notifications.Checks</PackageId>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <Authors>Victor Hugo</Authors>
         <Description>Reusable, observable domain checks for Scribe.Notifications. Encapsulate business validations as first-class notification producers.</Description>
         <PackageTags>notification;pattern;checks;validation;ddd;dotnet</PackageTags>
